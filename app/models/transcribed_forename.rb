@@ -4,7 +4,7 @@ class TranscribedForename < ActiveRecord::Base
 
   def self.process(filename)
     File.open(filename).each_line do |line|
-      row = line.chomp.split(',')
+      row = line.chomp.gsub(/[^[:ascii:]]/, '').split(',')
       record = TranscribedForename.new
       record.fill_from_row(row)
       record.save!
@@ -37,7 +37,7 @@ class TranscribedForename < ActiveRecord::Base
 
 
     self.role = role
-    self.name = name
+    self.name = name.truncate(250)
     self.frequency = frequency
 
     if name.match(/^[A-Za-z]+$/)
